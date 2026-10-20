@@ -2,3 +2,4 @@ Flask
 Flask-SQLAlchemy
 python-dotenv
 gunicorn
+psycopg[binary]>=3.1,<4

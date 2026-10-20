@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const showMap = (latitude, longitude, accuracy) => {
+  const showMap = (latitude, longitude, accuracy, recenterMap = true) => {
     mapFrame.hidden = false;
     if (!window.L) {
       feedback.textContent = 'Coordinates captured, but the map could not load. Enter a nearby landmark if you know one.';
@@ -172,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
       });
       renderHospitals();
     } else {
-      map.setView([latitude, longitude], 16);
+      if (recenterMap) map.setView([latitude, longitude], 16);
       marker.setLatLng([latitude, longitude]);
       accuracyCircle.setLatLng([latitude, longitude]);
       accuracyCircle.setRadius(accuracy || 0);
@@ -180,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  const setLocation = (latitude, longitude, accuracy) => {
+  const setLocation = (latitude, longitude, accuracy, recenterMap = true) => {
     latitudeInput.value = latitude.toFixed(6);
     longitudeInput.value = longitude.toFixed(6);
     if (marker) marker.setLatLng([latitude, longitude]);
@@ -188,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
       accuracyCircle.setLatLng([latitude, longitude]);
       accuracyCircle.setRadius(accuracy || 0);
     }
-    if (map) map.panTo([latitude, longitude]);
+    if (map && recenterMap) map.panTo([latitude, longitude]);
     updateAddress(latitude, longitude);
     findNearbyHospitals(latitude, longitude);
   };
@@ -209,8 +209,8 @@ document.addEventListener('DOMContentLoaded', () => {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude, accuracy } = position.coords;
-        setLocation(latitude, longitude, accuracy);
-        showMap(latitude, longitude, accuracy);
+        setLocation(latitude, longitude, accuracy, false);
+        showMap(latitude, longitude, accuracy, false);
         feedback.textContent = `Location captured (approximately ${Math.round(accuracy)} m accuracy). Looking up the address…`;
         button.disabled = false;
         button.classList.remove('is-loading');

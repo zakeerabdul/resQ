@@ -4,6 +4,8 @@ import json
 import uuid
 import threading
 import time
+import secrets
+import click
 from datetime import datetime, timezone
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
@@ -13,14 +15,51 @@ from dotenv import load_dotenv
 from flask import Flask, flash, jsonify, redirect, render_template, request, send_from_directory, session, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func, inspect
+from sqlalchemy.engine import make_url
+from sqlalchemy.exc import SQLAlchemyError
 from werkzeug.security import check_password_hash, generate_password_hash
 
 load_dotenv()
 
+is_vercel = os.getenv("VERCEL", "").strip().lower() in {"1", "true"}
+database_url = os.getenv("DATABASE_URL")
+if not database_url:
+    if is_vercel:
+        raise RuntimeError("DATABASE_URL must be configured for the Vercel deployment.")
+    database_url = "sqlite:///resq.db"
+
+try:
+    parsed_database_url = make_url(database_url)
+except SQLAlchemyError:
+    raise RuntimeError("DATABASE_URL is not a valid SQLAlchemy database URL.") from None
+
+if parsed_database_url.drivername == "postgres":
+    parsed_database_url = parsed_database_url.set(drivername="postgresql")
+
+if parsed_database_url.get_backend_name() == "postgresql":
+    if parsed_database_url.drivername in {"postgresql", "postgresql+psycopg2"}:
+        parsed_database_url = parsed_database_url.set(drivername="postgresql+psycopg")
+
+if is_vercel and parsed_database_url.get_backend_name() != "postgresql":
+    raise RuntimeError("DATABASE_URL must point to PostgreSQL in the Vercel deployment.")
+
+if parsed_database_url.get_backend_name() == "postgresql":
+    postgres_options = dict(parsed_database_url.query)
+    postgres_options.setdefault("sslmode", "require")
+    parsed_database_url = parsed_database_url.set(query=postgres_options)
+
 app = Flask(__name__)
-app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "resq-dev-secret-key")
-app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv("DATABASE_URL", "sqlite:///resq.db")
+secret_key = os.getenv("SECRET_KEY")
+if is_vercel and not secret_key:
+    raise RuntimeError("SECRET_KEY must be configured for the Vercel deployment.")
+app.config["SECRET_KEY"] = secret_key or secrets.token_urlsafe(32)
+app.config["SQLALCHEMY_DATABASE_URI"] = parsed_database_url
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+if parsed_database_url.get_backend_name() == "postgresql":
+    app.config["SQLALCHEMY_ENGINE_OPTIONS"] = {
+        "pool_pre_ping": True,
+        "pool_recycle": 300,
+    }
 
 
 db = SQLAlchemy(app)
@@ -527,12 +566,7 @@ def submit_emergency():
         flash("Please select a valid blood group.", "error")
         return redirect(url_for("emergency_help"))
 
-    emergency_id = f"RQ-{uuid.uuid4().hex.upper()}"
-    while EmergencyRequest.query.filter_by(emergency_id=emergency_id).first():
-        emergency_id = f"RQ-{uuid.uuid4().hex.upper()}"
-
     request_data = {
-        "emergency_id": emergency_id,
         "name": request.form.get("name").strip(),
         "phone": request.form.get("phone").strip(),
         "category": request.form.get("category").strip(),
@@ -551,28 +585,47 @@ def submit_emergency():
         "ai_explanation": "Rule-based triage placeholder. Human review remains required.",
     }
 
-    emergency = EmergencyRequest(**request_data)
-    db.session.add(emergency)
-    db.session.commit()
+    emergency_id = f"RQ-{uuid.uuid4().hex.upper()}"
+    try:
+        while EmergencyRequest.query.filter_by(emergency_id=emergency_id).first():
+            emergency_id = f"RQ-{uuid.uuid4().hex.upper()}"
 
-    db.session.add(StatusHistory(emergency_request_id=emergency.id, previous_status="NEW", new_status="PENDING", changed_by="SYSTEM", reason="Emergency request submitted"))
-    ambulance_required = ambulance_is_required(emergency.required_assistance)
-    admin_message = f"Emergency {emergency_id} has been received and is awaiting admin review."
-    if ambulance_required:
-        admin_message += " An ambulance was requested and the request is available to ambulance providers."
+        emergency = EmergencyRequest(emergency_id=emergency_id, **request_data)
+        db.session.add(emergency)
+        db.session.flush()
+        db.session.add(StatusHistory(
+            emergency_request_id=emergency.id,
+            previous_status="NEW",
+            new_status="PENDING",
+            changed_by="SYSTEM",
+            reason="Emergency request submitted",
+        ))
+
+        ambulance_required = ambulance_is_required(emergency.required_assistance)
+        admin_message = f"Emergency {emergency_id} has been received and is awaiting admin review."
+        if ambulance_required:
+            admin_message += " An ambulance was requested and the request is available to ambulance providers."
+            db.session.add(Notification(
+                category="EMERGENCY",
+                title="Ambulance requested",
+                message=f"Emergency {emergency_id} requires an ambulance. Review it in Emergency Monitoring.",
+                target_role="AMBULANCE",
+            ))
         db.session.add(Notification(
             category="EMERGENCY",
-            title="Ambulance requested",
-            message=f"Emergency {emergency_id} requires an ambulance. Review it in Emergency Monitoring.",
-            target_role="AMBULANCE",
+            title="New emergency request",
+            message=admin_message,
+            target_role="ADMIN",
         ))
-    db.session.add(Notification(
-        category="EMERGENCY",
-        title="New emergency request",
-        message=admin_message,
-        target_role="ADMIN",
-    ))
-    db.session.commit()
+        db.session.commit()
+    except SQLAlchemyError as error:
+        db.session.rollback()
+        app.logger.error(
+            "Failed to save emergency submission (database error: %s).",
+            type(error).__name__,
+        )
+        flash("We couldn't save your emergency request. Please try again.", "error")
+        return redirect(url_for("emergency_help"))
 
     flash(f"Emergency request {emergency_id} received.", "success")
     return redirect(url_for("emergency_confirmation", emergency_id=emergency_id))
@@ -1324,24 +1377,55 @@ def require_role(role):
     return True
 
 
-with app.app_context():
+@app.cli.command("init-db")
+def init_db_command():
+    """Create missing tables in the configured database without migrating data."""
     db.create_all()
-    if db.engine.dialect.name == "sqlite":
-        emergency_columns = {column["name"] for column in inspect(db.engine).get_columns("emergency_request")}
-        if "verification_code" in emergency_columns:
-            with db.engine.begin() as connection:
-                connection.exec_driver_sql("ALTER TABLE emergency_request DROP COLUMN verification_code")
-    elif db.engine.dialect.name == "postgresql":
+    if db.engine.dialect.name == "postgresql":
         emergency_id_column = next(
             column for column in inspect(db.engine).get_columns("emergency_request")
             if column["name"] == "emergency_id"
         )
-        if getattr(emergency_id_column["type"], "length", 0) < 40:
+        emergency_id_length = getattr(emergency_id_column["type"], "length", None)
+        if emergency_id_length is not None and emergency_id_length < 40:
             with db.engine.begin() as connection:
                 connection.exec_driver_sql(
                     "ALTER TABLE emergency_request ALTER COLUMN emergency_id TYPE VARCHAR(40)"
                 )
-    create_seed_data()
+    click.echo("Database schema initialized. Existing records were not copied or reset.")
+
+
+@app.cli.command("create-admin")
+@click.option("--email", prompt=True)
+@click.option("--name", prompt="Admin name")
+@click.password_option(confirmation_prompt=True)
+def create_admin_command(email, name, password):
+    """Create an administrator account using an interactive password prompt."""
+    email = email.strip().lower()
+    name = name.strip()
+    if not email or not name or not password:
+        raise click.ClickException("Email, name, and password must not be empty.")
+    if Admin.query.filter_by(email=email).first():
+        raise click.ClickException("An administrator with that email already exists.")
+
+    db.session.add(Admin(
+        name=name,
+        email=email,
+        password_hash=generate_password_hash(password),
+    ))
+    try:
+        db.session.commit()
+    except SQLAlchemyError as error:
+        db.session.rollback()
+        app.logger.error("Failed to create administrator (database error: %s).", type(error).__name__)
+        raise click.ClickException("Could not create the administrator account.") from None
+    click.echo("Administrator account created.")
+
+
+if not is_vercel and parsed_database_url.get_backend_name() == "sqlite":
+    with app.app_context():
+        db.create_all()
+        create_seed_data()
 
 
 if __name__ == "__main__":
