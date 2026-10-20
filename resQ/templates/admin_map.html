@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}Live Map | ResQ{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="page-head">
+      <div>
+        <h1>Live Emergency Map</h1>
+        <p>Reported user locations and ambulance provider locations refresh automatically.</p>
+      </div>
+      <p data-live-map-status role="status" aria-live="polite">Connecting to live location updates…</p>
+    </div>
+    <div class="map-panel">
+      <div class="location-map-canvas admin-live-map" data-admin-live-map aria-label="Live map of emergency requests and ambulance providers"></div>
+      <div class="legend">
+        <strong>Legend</strong>
+        <span><i class="dot red"></i> Emergency requester</span>
+        <span><i class="dot blue"></i> Ambulance provider</span>
+      </div>
+    </div>
+    <p class="hospital-data-note">User locations update only while the requester has enabled live sharing on the confirmation page. Ambulance locations update only while providers have live sharing enabled; otherwise the map shows their last registered coordinates.</p>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/admin_map.js', v='1') }}"></script>
+{% endblock %}

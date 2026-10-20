@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Admin Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="page-head">
+      <h1>Administrator Dashboard</h1>
+      <a class="button secondary" href="/admin-logout">Logout</a>
+    </div>
+    <div class="stats-grid">
+      {% for key, value in stats.items() %}
+      <div class="stat-box">
+        <span>{{ key.replace('_', ' ').title() }}</span>
+        <strong>{{ value }}</strong>
+      </div>
+      {% endfor %}
+    </div>
+    <div class="panel">
+      <h2>Recent requests</h2>
+      <ul class="list-table">
+        {% for req in recent %}
+        <li><strong>{{ req.emergency_id }}</strong> - {{ req.name }} - {{ req.status }} - {{ req.priority }}</li>
+        {% endfor %}
+      </ul>
+      <div class="links-row">
+        <a href="/admin/monitoring" class="button primary">Emergency Monitoring</a>
+        <a href="/admin/map" class="button secondary">Live Map</a>
+        <a href="/admin/providers" class="button secondary">Provider Management</a>
+        <a href="/admin/reports" class="button secondary">Reports</a>
+        <a href="/admin/simulation" class="button secondary">Simulation</a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Admin Login | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container auth-shell">
+    <div class="auth-card">
+      <h1>Administrator Login</h1>
+      <p class="muted">Initial admin account: zakeerabdul@admin.com / admin@123</p>
+      <form method="post" class="stack-form">
+        <label>Email
+          <input type="email" name="email" required />
+        </label>
+        <label>Password
+          <input type="password" name="password" required />
+        </label>
+        <button class="button primary" type="submit">Login</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

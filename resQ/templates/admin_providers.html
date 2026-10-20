@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% block title %}Provider Management | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Provider Management</h1>
+    <div class="provider-grid">
+      <div class="panel">
+        <h2>Ambulance Providers</h2>
+        {% for provider in ambulances %}
+        <p><strong>{{ provider.provider_name }}</strong> - {{ provider.availability_status }} - {{ provider.verification_status }}</p>
+        {% else %}
+        <p class="muted">No ambulance providers registered.</p>
+        {% endfor %}
+      </div>
+      <div class="panel">
+        <h2>Shelter Providers</h2>
+        {% for shelter in shelters %}
+        <p><strong>{{ shelter.shelter_name }}</strong> - {{ shelter.availability_status }} - {{ shelter.available_spaces }} spaces</p>
+        {% else %}
+        <p class="muted">No shelter providers registered.</p>
+        {% endfor %}
+      </div>
+      <div class="panel">
+        <h2>Volunteers</h2>
+        {% for volunteer in volunteers %}
+        <p><strong>{{ volunteer.name }}</strong> - {{ volunteer.availability }} - {{ volunteer.verification_status }}</p>
+        {% else %}
+        <p class="muted">No volunteers registered.</p>
+        {% endfor %}
+      </div>
+      <div class="panel">
+        <h2>Hospitals</h2>
+        {% for hospital in hospitals %}
+        <p><strong>{{ hospital.name }}</strong> - {{ hospital.available_beds }} available beds</p>
+        {% else %}
+        <p class="muted">No hospitals registered.</p>
+        {% endfor %}
+      </div>
+      <div class="panel">
+        <h2>Blood Donors</h2>
+        {% for donor in donors %}
+        <p><strong>{{ donor.name }}</strong> - {{ donor.blood_group }} - {{ donor.availability_status }} - {{ donor.verification_status }}</p>
+        {% else %}
+        <p class="muted">No blood donors registered.</p>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

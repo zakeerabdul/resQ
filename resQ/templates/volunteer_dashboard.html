@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Volunteer Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Volunteer Dashboard</h1>
+    <div class="panel">
+      <p><strong>Name:</strong> {{ volunteer.name }}</p>
+      <p><strong>Verification:</strong> {{ volunteer.verification_status }}</p>
+      <p><strong>Availability:</strong> {{ volunteer.availability }}</p>
+      <p><strong>Skills:</strong> {{ volunteer.skills }}</p>
+      <p><strong>Service area:</strong> {{ volunteer.service_area }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

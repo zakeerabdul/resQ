@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Volunteer Login | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container auth-shell">
+    <div class="auth-card">
+      <h1>Volunteer Login</h1>
+      <form method="post" class="stack-form">
+        <label>Email<input type="email" name="email" required /></label>
+        <label>Password<input type="password" name="password" required /></label>
+        <button class="button primary" type="submit">Login</button>
+      </form>
+      <p><a href="/volunteer-register">Register as a volunteer</a></p>
+    </div>
+  </div>
+</section>
+{% endblock %}

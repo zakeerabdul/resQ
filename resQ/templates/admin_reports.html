@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Reports | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Reports and Analytics</h1>
+    <div class="stats-grid">
+      <div class="stat-box"><span>Available Beds</span><strong>{{ total_beds }}</strong></div>
+    </div>
+    <div class="panel">
+      <h2>Requests by category</h2>
+      {% for category, count in category_counts %}
+      <p>{{ category }}: {{ count }}</p>
+      {% endfor %}
+    </div>
+    <div class="panel">
+      <h2>Requests by status</h2>
+      {% for status, count in status_counts %}
+      <p>{{ status }}: {{ count }}</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

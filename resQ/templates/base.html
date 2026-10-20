@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}ResQ{% endblock %}</title>
+
+  <link rel="icon"
+        href="{{ url_for('static', filename='favicon.svg') }}"
+        type="image/svg+xml" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='9') }}" />
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <span class="brand-mark">R</span>
+        <span>ResQ</span>
+      </div>
+      <nav>
+        <a href="/">Home</a>
+        <a href="/emergency-help">Emergency Help</a>
+        <a href="/request-tracking">Track</a>
+        <details class="member-sign-in">
+          <summary>Member sign in</summary>
+          <div class="member-sign-in-menu">
+            <a href="/ambulance-login">Ambulance Provider</a>
+            <a href="/shelter-login">Shelter Provider</a>
+            <a href="/volunteer-login">Volunteer</a>
+            <a href="/blood-donor-login">Blood Donor</a>
+          </div>
+        </details>
+        <a href="/admin-login">Admin</a>
+      </nav>
+    </div>
+  </header>
+  <main class="page-shell">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="container flash-stack">
+          {% for category, message in messages %}
+            <div class="flash flash-{{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

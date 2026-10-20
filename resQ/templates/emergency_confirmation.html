@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% block title %}Request Confirmed | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container auth-shell">
+    <div class="auth-card success-panel">
+      <h1>Emergency Request Submitted</h1>
+      <p>Emergency ID: <strong>{{ emergency.emergency_id }}</strong></p>
+      <p>Save this ID to check your request status later.</p>
+      <p>Your request has been received and is under review by the response team.</p>
+      {% if emergency.latitude or emergency.longitude %}
+      <div class="panel live-location-share" data-emergency-live-location data-emergency-id="{{ emergency.emergency_id }}">
+        <h2>Share your live location</h2>
+        <p>Allow location access to send updated coordinates to the response team while your request is active. Sharing is optional and can be stopped at any time.</p>
+        <button class="button secondary" type="button" data-live-location-toggle>Start live sharing</button>
+        <p data-live-location-status role="status" aria-live="polite">Live location sharing is off.</p>
+      </div>
+      {% endif %}
+      <a class="button primary" href="/request-tracking">Track Request</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/live_location.js', v='1') }}"></script>
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block title %}Volunteer Registration | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>Volunteer Registration</h1>
+      <form method="post" class="stack-form">
+        <div class="two-col">
+          <label>Full name<input type="text" name="name" required /></label>
+          <label>Email<input type="email" name="email" required /></label>
+        </div>
+        <div class="two-col">
+          <label>Mobile number<input type="tel" name="phone" required /></label>
+          <label>Service area<input type="text" name="service_area" /></label>
+        </div>
+        <label>Skills<input type="text" name="skills" /></label>
+        <label>Password<input type="password" name="password" required /></label>
+        <div class="two-col">
+          <label>Latitude<input type="number" step="any" name="latitude" /></label>
+          <label>Longitude<input type="number" step="any" name="longitude" /></label>
+        </div>
+        <button class="button primary" type="submit">Register Volunteer</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

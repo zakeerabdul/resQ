@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block title %}Hospital Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Hospital Management Dashboard</h1>
+    {% for hospital in hospitals %}
+    <div class="panel">
+      <h2>{{ hospital.name }}</h2>
+      <form method="post" class="stack-form">
+        <input type="hidden" name="hospital_id" value="{{ hospital.id }}" />
+        <div class="two-col">
+          <label>Total beds<input type="number" name="total_beds" value="{{ hospital.total_beds }}" /></label>
+          <label>Occupied beds<input type="number" name="occupied_beds" value="{{ hospital.occupied_beds }}" /></label>
+        </div>
+        <label>Facilities<input type="text" name="facilities" value="{{ hospital.facilities }}" /></label>
+        <button class="button primary" type="submit">Update</button>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

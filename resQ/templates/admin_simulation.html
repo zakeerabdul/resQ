@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Disaster Simulation | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Disaster Scenario Simulator</h1>
+    <div class="panel">
+      <p>SIMULATED DEMO DATA: Use this dashboard to demonstrate emergency response behaviour during a simulated disaster.</p>
+      <form method="post" action="/admin/simulate" class="stack-form">
+        <label>Scenario
+          <select name="scenario">
+            <option>Flood</option>
+            <option>Road accident</option>
+            <option>Fire</option>
+            <option>Shelter shortage</option>
+            <option>Ambulance shortage</option>
+            <option>Blood requirement</option>
+          </select>
+        </label>
+        <button type="submit" class="button primary">Run Simulation</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

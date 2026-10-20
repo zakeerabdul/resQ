@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block title %}Hospital Directory | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Hospital Directory</h1>
+    <div class="provider-grid">
+      {% for hospital in hospitals %}
+      <div class="panel">
+        <h2>{{ hospital.name }}</h2>
+        <p>{{ hospital.address }}</p>
+        <p>Available beds: {{ hospital.available_beds }}</p>
+        <p>Facilities: {{ hospital.facilities }}</p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

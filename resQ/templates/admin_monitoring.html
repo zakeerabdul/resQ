@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+{% block title %}Emergency Monitoring | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Emergency Monitoring</h1>
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Priority</th>
+            <th>Location</th>
+            <th>Help requested</th>
+            <th>Assignee</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for req in requests %}
+          <tr>
+            <td>{{ req.emergency_id }}</td>
+            <td>{{ req.name }}</td>
+            <td>{{ req.category }}</td>
+            <td>{{ req.status }}</td>
+            <td>{{ req.priority }}</td>
+            <td>{{ req.current_location }}</td>
+            <td>{{ req.required_assistance or '-' }}</td>
+            <td>{{ req.assigned_ambulance_id or '-' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock %}

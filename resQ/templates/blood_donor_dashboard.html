@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Blood Donor Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Blood Donor Dashboard</h1>
+    <div class="panel">
+      <p><strong>Name:</strong> {{ donor.name }}</p>
+      <p><strong>Blood group:</strong> {{ donor.blood_group }}</p>
+      <p><strong>Availability:</strong> {{ donor.availability_status }}</p>
+      <p><strong>Consent:</strong> {{ 'Enabled' if donor.consent else 'Disabled' }}</p>
+      <p><strong>City:</strong> {{ donor.city }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Blood Donor Registration | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>Blood Donor Registration</h1>
+      <form method="post" class="stack-form">
+        <div class="two-col">
+          <label>Full name<input type="text" name="name" required /></label>
+          <label>Email<input type="email" name="email" required /></label>
+        </div>
+        <div class="two-col">
+          <label>Mobile number<input type="tel" name="phone" required /></label>
+          <label>Blood group
+            <select name="blood_group" required>
+              <option value="">Select blood group</option>
+              {% for blood_group in blood_groups %}
+              <option value="{{ blood_group }}">{{ blood_group }}</option>
+              {% endfor %}
+            </select>
+          </label>
+        </div>
+        <div class="two-col">
+          <label>City<input type="text" name="city" /></label>
+          <label>Preferred donation location<input type="text" name="preferred_location" /></label>
+        </div>
+        <label>Password<input type="password" name="password" required /></label>
+        <label><input type="checkbox" name="consent" checked /> I consent to be contacted for emergency blood donations.</label>
+        <button class="button primary" type="submit">Register as Donor</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% block title %}Track Request | ResQ{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>Track Emergency Request</h1>
+      <form method="post" class="stack-form">
+        <label>Emergency ID<input type="text" name="emergency_id" required /></label>
+        <button class="button primary" type="submit">Check Status</button>
+      </form>
+
+      {% if emergency %}
+      <div class="panel status-panel" data-tracking-emergency-id="{{ emergency.emergency_id }}">
+        <h2>Request Details</h2>
+        <p><strong>ID:</strong> {{ emergency.emergency_id }}</p>
+        <p><strong>Status:</strong> <span data-tracking-status>{{ emergency.status }}</span></p>
+        <p><strong>Submitted:</strong> {{ emergency.created_at.strftime('%d %b %Y, %H:%M UTC') }}</p>
+        <p data-tracking-location-status role="status" aria-live="polite">Loading latest location…</p>
+        <div class="location-map-frame" data-tracking-map-frame hidden>
+          <div class="location-map-canvas tracking-map" data-tracking-map aria-label="Map showing the latest shared location for this request"></div>
+          <p class="map-help">The marker shows the latest location shared for this emergency request.</p>
+        </div>
+        {% if emergency.status not in ['RESOLVED', 'CANCELLED'] %}
+        <div class="panel live-location-share" data-emergency-live-location data-emergency-id="{{ emergency.emergency_id }}">
+          <h3>Share your live location</h3>
+          <p>Allow location access to update your position on this tracking page and share it with the response team. Sharing is optional.</p>
+          <button class="button secondary" type="button" data-live-location-toggle>Start live sharing</button>
+          <p data-live-location-status role="status" aria-live="polite">Live location sharing is off.</p>
+        </div>
+        {% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+{% if emergency %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/live_location.js', v='1') }}"></script>
+<script src="{{ url_for('static', filename='js/request_tracking.js', v='1') }}"></script>
+{% endif %}
+{% endblock %}

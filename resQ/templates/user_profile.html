@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}User Profile | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>User Profile & Account Settings</h1>
+      <p>Profile management for emergency contact details and saved preferences.</p>
+      <form class="stack-form">
+        <label>Full name<input type="text" value="Demo user" /></label>
+        <label>Email<input type="email" value="demo@example.com" /></label>
+        <label>Preferred hospital<input type="text" value="City General Hospital" /></label>
+        <button class="button primary" type="button">Save Settings</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

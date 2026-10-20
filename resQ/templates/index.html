@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ResQ | Emergency Response</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css', v='9') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="container nav">
+      <div class="brand">
+        <span class="brand-mark">R</span>
+        <span>ResQ</span>
+      </div>
+      <nav>
+        <a href="#about">About</a>
+        <a href="#services">Services</a>
+        <a href="#map">Map</a>
+        <a href="/request-tracking">Track Request</a>
+        <details class="member-sign-in">
+          <summary>Member sign in</summary>
+          <div class="member-sign-in-menu">
+            <a href="/ambulance-login">Ambulance Provider</a>
+            <a href="/shelter-login">Shelter Provider</a>
+            <a href="/volunteer-login">Volunteer</a>
+            <a href="/blood-donor-login">Blood Donor</a>
+          </div>
+        </details>
+        <a href="/admin-login">Admin</a>
+      </nav>
+      <a class="button primary" href="/emergency-help">Request Emergency Help</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Emergency resource coordination</p>
+          <h1>Faster response when every minute matters.</h1>
+          <p class="lead">ResQ connects emergency callers with ambulances, hospitals, shelters, volunteers, and blood donors in a single, coordinated system.</p>
+          <div class="hero-actions">
+            <a class="button primary large" href="/emergency-help">REQUEST EMERGENCY HELP</a>
+            <a class="button secondary large" href="/request-tracking">Track Request</a>
+          </div>
+          <div class="stat-row">
+            <div>
+              <strong>{{ emergency_count }}</strong>
+              <span>Requests</span>
+            </div>
+            <div>
+              <strong>{{ active_ambulances }}</strong>
+              <span>Ambulances</span>
+            </div>
+            <div>
+              <strong>{{ available_shelters }}</strong>
+              <span>Shelters</span>
+            </div>
+          </div>
+        </div>
+        <div class="hero-card">
+          <div class="card-title">Live Overview</div>
+          <ul class="mini-list">
+            <li><span class="dot green"></span> Available ambulances: <strong>{{ active_ambulances }}</strong></li>
+            <li><span class="dot blue"></span> Pending requests: <strong>{{ pending_requests }}</strong></li>
+            <li><span class="dot orange"></span> Hospitals: <strong>{{ hospitals }}</strong></li>
+            <li><span class="dot maroon"></span> Registered donors: <strong>{{ donors }}</strong></li>
+          </ul>
+          <div class="mini-map">
+            <div class="map-pin pin-one"></div>
+            <div class="map-pin pin-two"></div>
+            <div class="map-pin pin-three"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="section">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">How ResQ works</p>
+          <h2>One command center for every emergency response</h2>
+        </div>
+        <div class="steps">
+          <article class="step-card">
+            <span class="step-number">1</span>
+            <h3>Report</h3>
+            <p>A person reports an emergency in seconds without sign-up.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">2</span>
+            <h3>Assess</h3>
+            <p>AI-driven triage and admin review prioritize the request.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">3</span>
+            <h3>Dispatch</h3>
+            <p>Ambulances, hospitals, shelters, volunteers and donors are matched and assigned.</p>
+          </article>
+          <article class="step-card">
+            <span class="step-number">4</span>
+            <h3>Respond</h3>
+            <p>Resources update progress and status in real time for coordination.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="section alternate">
+      <div class="container">
+        <div class="section-heading">
+          <p class="eyebrow">Available services</p>
+          <h2>Connected support across the rescue chain</h2>
+        </div>
+        <div class="service-grid">
+          <div class="feature-card"><span>🚑</span><h3>Ambulances</h3><p>Live availability and emergency dispatch.</p></div>
+          <div class="feature-card"><span>🏥</span><h3>Hospitals</h3><p>Bed status, trauma facilities and admissions.</p></div>
+          <div class="feature-card"><span>🏠</span><h3>Shelters</h3><p>Temporary accommodation and family support.</p></div>
+          <div class="feature-card"><span>🤝</span><h3>Volunteers</h3><p>Community support and field response teams.</p></div>
+          <div class="feature-card"><span>🩸</span><h3>Blood donors</h3><p>Urgent blood requests and donor coordination.</p></div>
+          <div class="feature-card"><span>📊</span><h3>Admin control</h3><p>Monitoring, analytics and resource assignments.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="map" class="section">
+      <div class="container map-layout">
+        <div>
+          <p class="eyebrow">Coverage map</p>
+          <h2>Emergency activity across the region</h2>
+          <p>Nearby hospitals, shelters and mobile response units are displayed to help administrators and providers coordinate action faster.</p>
+        </div>
+        <div class="map-preview">
+          <div class="map-dot d1"></div>
+          <div class="map-dot d2"></div>
+          <div class="map-dot d3"></div>
+          <div class="map-dot d4"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section alternate login-strip">
+      <div class="container login-grid">
+        <div class="login-card">
+          <h3>Member Sign In</h3>
+          <ul>
+            <li><a href="/ambulance-login">Ambulance Provider</a></li>
+            <li><a href="/shelter-login">Shelter Provider</a></li>
+            <li><a href="/volunteer-login">Volunteer</a></li>
+            <li><a href="/blood-donor-login">Blood Donor</a></li>
+          </ul>
+        </div>
+        <div class="login-card">
+          <h3>Emergency Contact</h3>
+          <p>National emergency helpline: <strong>112</strong></p>
+          <p>Medical support: <strong>108</strong></p>
+          <p>For safety steps and disaster readiness: visit local emergency services guidance.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div>
+        <h4>ResQ</h4>
+        <p>Emergency Resource Management and Rescue System.</p>
+      </div>
+      <div>
+        <h4>Quick links</h4>
+        <a href="/emergency-help">Request Help</a>
+        <a href="/request-tracking">Track Request</a>
+        <a href="/admin-login">Admin Login</a>
+      </div>
+      <div>
+        <h4>Safety</h4>
+        <p>Use emergency services immediately if there is immediate danger.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>

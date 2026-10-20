@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Blood Request | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>Request Blood Support</h1>
+      <form method="post" class="stack-form">
+        <label>Patient name<input type="text" name="patient_name" required /></label>
+        <div class="two-col">
+          <label>Blood group
+            <select name="blood_group" required>
+              <option value="">Select blood group</option>
+              {% for blood_group in blood_groups %}
+              <option value="{{ blood_group }}">{{ blood_group }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Urgency<select name="urgency"><option>High</option><option>Medium</option><option>Low</option></select></label>
+        </div>
+        <label>Location<input type="text" name="location" required /></label>
+        <button class="button primary" type="submit">Submit Blood Request</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}

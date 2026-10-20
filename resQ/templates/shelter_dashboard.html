@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Shelter Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Shelter Dashboard</h1>
+    <div class="panel">
+      <p><strong>Shelter:</strong> {{ shelter.shelter_name }}</p>
+      <p><strong>Verification:</strong> {{ shelter.verification_status }}</p>
+      <p><strong>Availability:</strong> {{ shelter.availability_status }}</p>
+      <p><strong>Available spaces:</strong> {{ shelter.available_spaces }}</p>
+      <p><strong>Facilities:</strong> {{ shelter.facilities }}</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

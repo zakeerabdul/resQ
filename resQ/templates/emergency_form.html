@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}Emergency Help | ResQ{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
+{% block content %}
+<section class="section emergency-request-section">
+  <div class="container form-layout">
+    <div class="form-intro">
+      <span class="eyebrow">ResQ emergency response</span>
+      <h1>Tell us what’s happening.</h1>
+      <p>Share the details below so our response team can understand what support is needed. You don’t need an account.</p>
+      <div class="form-safety-note"><strong>Immediate danger?</strong> Call your local emergency services now. In India, call 112.</div>
+    </div>
+    <div class="panel request-panel">
+      <div class="form-section-heading">
+        <span class="form-step">01</span>
+        <div>
+          <h2>Emergency details</h2>
+          <p>Fields marked with * are required.</p>
+        </div>
+      </div>
+      <form method="post" action="/submit-emergency" class="stack-form">
+        <div class="two-col">
+          <label>Full name *
+            <input type="text" name="name" autocomplete="name" placeholder="Your name" required />
+          </label>
+          <label>Mobile number *
+            <input type="tel" name="phone" autocomplete="tel" placeholder="Number responders can reach" required />
+          </label>
+        </div>
+        <div class="two-col">
+          <label>Emergency category *
+            <select name="category" required>
+              {% for category in categories %}
+              <option value="{{ category }}">{{ category }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>People affected
+            <input type="number" name="people_affected" value="1" min="1" />
+          </label>
+        </div>
+        <div class="voice-description">
+          <label for="problem-description">What happened? *</label>
+          <div class="voice-controls">
+            <select aria-label="Voice input language" data-voice-language>
+              <option value="en-IN">English (India)</option>
+              <option value="te-IN">Telugu</option>
+              <option value="hi-IN">Hindi</option>
+            </select>
+            <button class="button secondary voice-button" type="button" data-voice-button>
+              <span aria-hidden="true">🎙</span>
+              <span data-voice-button-label>Describe by voice</span>
+            </button>
+            <span class="voice-visualizer" data-voice-visualizer aria-hidden="true" hidden>
+              <span></span><span></span><span></span><span></span><span></span>
+            </span>
+          </div>
+          <textarea id="problem-description" name="problem_description" rows="4" placeholder="Describe the emergency and any urgent risks..." required></textarea>
+          <p class="voice-status" data-voice-status role="status" aria-live="polite">You can type or dictate your emergency description.</p>
+          <p class="voice-privacy">If you say “ambulance”, the help-needed field is marked so ambulance providers can see the request.</p>
+          <p class="voice-privacy">Speech recognition is provided by your browser and its service may process audio. ResQ receives the resulting text and does not store audio. Review the transcript before submitting.</p>
+        </div>
+        <label>What help is needed?
+          <input type="text" name="required_assistance" placeholder="Enter ambulance if you need ambulance support" />
+        </label>
+
+        <div class="location-card" data-location-widget>
+          <div class="location-card-heading">
+            <span class="location-icon" aria-hidden="true">⌖</span>
+            <div>
+              <h3>Your location</h3>
+              <p>Allow location access to fill in your address and place a pin on the map.</p>
+            </div>
+          </div>
+          <button class="button location-button" type="button" data-location-button>
+            <span aria-hidden="true">◎</span> Use my current location
+          </button>
+          <p class="location-feedback" data-location-feedback role="status" aria-live="polite">Location hasn’t been shared yet. You can also enter an address below.</p>
+          <div class="location-map-frame" data-map-frame hidden>
+            <div class="location-map-canvas" data-location-map aria-label="Map showing your emergency location"></div>
+            <p class="map-help">The circle shows the reported GPS accuracy. Drag the pin or tap the map to correct the location. Map data © OpenStreetMap contributors.</p>
+          </div>
+          <div class="nearby-hospitals" data-nearby-hospitals hidden>
+            <div class="nearby-hospitals-heading">
+              <h3>Nearest hospital</h3>
+              <span data-hospital-count></span>
+            </div>
+            <p class="nearby-hospital-status" data-hospital-status role="status" aria-live="polite"></p>
+            <ul class="nearby-hospital-list" data-hospital-list></ul>
+            <p class="hospital-data-note">Names and map locations are from OpenStreetMap and may be incomplete or out of date. Call the hospital to confirm services and bed availability.</p>
+          </div>
+          <label>Address or nearby landmark
+            <input type="text" name="current_location" autocomplete="street-address" placeholder="Street, area, landmark, or town" data-location-address />
+          </label>
+          <div class="two-col coordinate-fields">
+            <label>Latitude
+              <input type="number" step="any" name="latitude" data-latitude placeholder="Filled after location access" />
+            </label>
+            <label>Longitude
+              <input type="number" step="any" name="longitude" data-longitude placeholder="Filled after location access" />
+            </label>
+          </div>
+          <p class="location-privacy">When you request a location lookup, coordinates are used to find the address and nearby facilities using OpenStreetMap data.</p>
+        </div>
+
+        <label class="checkbox-field">
+          <input type="checkbox" name="blood_required" />
+          <span>Blood is required</span>
+        </label>
+        <div class="two-col">
+          <label>Blood group <span class="optional-label">Optional</span>
+            <select name="blood_group">
+              <option value="">Select blood group</option>
+              {% for blood_group in blood_groups %}
+              <option value="{{ blood_group }}">{{ blood_group }}</option>
+              {% endfor %}
+            </select>
+          </label>
+          <label>Additional information <span class="optional-label">Optional</span>
+            <textarea name="additional_info" rows="3" placeholder="Anything else responders should know?"></textarea>
+          </label>
+        </div>
+        <div class="form-submit">
+          <p>Submitting sends your details to the ResQ response team.</p>
+          <button class="button primary submit-request" type="submit">Send emergency request <span aria-hidden="true">→</span></button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+<script src="{{ url_for('static', filename='js/location.js', v='5') }}" defer></script>
+<script src="{{ url_for('static', filename='js/voice_help.js', v='3') }}" defer></script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block title %}Ambulance Login | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container auth-shell">
+    <div class="auth-card">
+      <h1>Ambulance Provider Login</h1>
+      <p>Sign in to view emergency requests that need ambulance support.</p>
+      <form method="post" class="stack-form">
+        <label>Email<input type="email" name="email" required /></label>
+        <label>Password<input type="password" name="password" required /></label>
+        <button class="button primary" type="submit">Login</button>
+      </form>
+      <p>New provider? <a href="/ambulance-register">Register your ambulance service</a>.</p>
+    </div>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Ambulance Dashboard | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <div class="page-head">
+      <h1>Ambulance Provider Dashboard</h1>
+      <a class="button secondary" href="/ambulance-logout">Sign out</a>
+    </div>
+    <div class="panel">
+      <p><strong>Provider:</strong> {{ provider.provider_name }}</p>
+      <p><strong>Verification:</strong> {{ provider.verification_status }}</p>
+      <p><strong>Availability:</strong> {{ provider.availability_status }}</p>
+      <p><strong>Location:</strong> {{ provider.current_location or 'Not provisioned' }}</p>
+      <div data-provider-live-location>
+        <button class="button secondary" type="button" data-live-location-toggle>Start sharing live location</button>
+        <p data-live-location-status role="status" aria-live="polite">Live location sharing is off.</p>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Ambulance requests <span data-request-update-status role="status" aria-live="polite"></span></h2>
+      <p>New emergency requests refresh automatically. Open the location link to navigate to a requester.</p>
+      <div class="stack-form" data-ambulance-requests>
+        {% if requests %}
+        {% for req in requests %}
+        <article class="panel">
+          <h3>{{ req.emergency_id }} · {{ req.category }}</h3>
+          <p><strong>Status:</strong> {{ req.status }} · <strong>Priority:</strong> {{ req.priority }}</p>
+          <p><strong>Requester:</strong> {{ req.name }} · <a href="tel:{{ req.phone }}">{{ req.phone }}</a></p>
+          <p><strong>Location:</strong> {{ req.current_location or 'Not provided' }}</p>
+          {% if req.latitude or req.longitude %}
+          <p><a href="https://www.google.com/maps?q={{ req.latitude }},{{ req.longitude }}" target="_blank" rel="noopener">Open requester location in Maps</a></p>
+          {% endif %}
+          <p><strong>Help requested:</strong> {{ req.required_assistance }}</p>
+          <p><strong>Emergency details:</strong> {{ req.problem_description }}</p>
+          <small>Received {{ req.created_at.strftime('%Y-%m-%d %H:%M UTC') }}</small>
+        </article>
+        {% endfor %}
+        {% else %}
+        <p>No ambulance requests have been submitted yet.</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/live_location.js', v='1') }}"></script>
+<script src="{{ url_for('static', filename='js/ambulance_dashboard.js', v='1') }}"></script>
+{% endblock %}

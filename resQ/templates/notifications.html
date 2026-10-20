@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}Notifications | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <h1>Notifications</h1>
+    {% for item in notifications %}
+    <div class="panel">
+      <h3>{{ item.title }}</h3>
+      <p>{{ item.message }}</p>
+      <small>{{ item.created_at }}</small>
+    </div>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

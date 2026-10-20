@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}Ambulance Registration | ResQ{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container form-layout">
+    <div class="panel">
+      <h1>Ambulance Provider Registration</h1>
+      <form method="post" class="stack-form">
+        <div class="two-col">
+          <label>Provider name<input type="text" name="provider_name" required /></label>
+          <label>Authorized contact<input type="text" name="contact_name" required /></label>
+        </div>
+        <div class="two-col">
+          <label>Email<input type="email" name="email" required /></label>
+          <label>Mobile number<input type="tel" name="phone" required /></label>
+        </div>
+        <div class="two-col">
+          <label>Password<input type="password" name="password" required /></label>
+          <label>Registration number<input type="text" name="registration_number" required /></label>
+        </div>
+        <div class="two-col">
+          <label>Ambulance type<input type="text" name="ambulance_type" required /></label>
+          <label>Service area<input type="text" name="service_area" required /></label>
+        </div>
+        <label>Current location<input type="text" name="current_location" /></label>
+        <div class="two-col">
+          <label>Latitude<input type="number" step="any" name="latitude" /></label>
+          <label>Longitude<input type="number" step="any" name="longitude" /></label>
+        </div>
+        <button class="button primary" type="submit">Register Provider</button>
+      </form>
+    </div>
+  </div>
+</section>
+{% endblock %}
